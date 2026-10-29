@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",           // Вместо NodeNext. Разрешает современный синтаксис импортов.
+    "moduleResolution": "Node",    // Вместо NodeNext. Включает классический поиск файлов (можно опускать расширения и /index).
+    "esModuleInterop": true,
+    "strict": true
+  }
+}
