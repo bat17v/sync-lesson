@@ -3,6 +3,7 @@ import type { Student } from "../../shared/types";
 
 import './style.css';
 import './custom-tags';
+import { render_all } from "./render";
 
 
 const socket = io("http://localhost:8080");
@@ -15,9 +16,11 @@ const status_bar = document.getElementById('status-bar') as HTMLElement;
 
 const join_btn = document.getElementById('join-btn') as HTMLButtonElement;
 const name_input = document.getElementById('name-input') as HTMLInputElement;
+const actual_slide = document.getElementById('actual-lesson') as HTMLElement;
 
 const lesson_editor = document.getElementById('lesson-editor') as HTMLInputElement;
 const lesson_submit = document.getElementById('lesson-submit') as HTMLInputElement;
+const lenta = document.getElementById('lenta') as HTMLElement;
 
 function changeScreen(scr: ScreenId) {
     SCREEN_TYPES.forEach(scr_typ_id => {
@@ -50,7 +53,7 @@ join_btn.onclick = function () {
     if (name_input.value == "") return;
     localStorage.my_name = name_input.value;
     authBy(name_input.value);
-}
+};
 
 socket.on("students_list_updated", (data: Student[]) => {
     document.getElementById('others').replaceChildren(...data.map(e => Object.assign(document.createElement("li"), {innerText: e.name})));
@@ -61,4 +64,8 @@ lesson_submit.onclick = async function () {
         alert("Upload the lesson!");
     }
     socket.emit('update_lesson', {lesson: await lesson_editor.files[0].text()});
-}
+};
+
+socket.on('actual_lesson', (data) => {
+    lenta.innerHTML = render_all(data.lesson);
+});

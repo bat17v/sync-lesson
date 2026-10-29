@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 
 // const app = express();
 const students = new Map<string, Student>; 
+var actual_lesson: Lesson = {title:"", slides:[]};
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -21,8 +22,13 @@ io.on("connection", (socket) => {
         console.log("It's join event from", socket.id, data.name);
         if (data.name == 'admin') role = 'admin';
         else role = 'student';
-        students.set(socket.id, {socket_id: socket.id, name: data.name});
-        io.emit("students_list_updated", Array.from(students.values()));
+
+        if (role == 'admin') {
+            socket.emit('actual_lesson', {lesson: actual_lesson});
+        } else {
+            students.set(socket.id, {socket_id: socket.id, name: data.name});
+            io.emit("students_list_updated", Array.from(students.values()));
+        }
     });
 
     socket.on("disconnect", () => {
@@ -34,7 +40,8 @@ io.on("connection", (socket) => {
     socket.on("update_lesson", (data) => {
         if (role != 'admin') return;
         let t = JSON.parse(data.lesson) as Lesson;
-        console.log(t.title);
+        actual_lesson = t;
+        socket.emit('actual_lesson', {lesson: actual_lesson});
     });
 });
 
