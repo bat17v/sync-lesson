@@ -1,5 +1,5 @@
 // import express from "express";
-import { Student } from "../shared/types";
+import type { Lesson, Student, Role } from "../shared/types";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
@@ -15,9 +15,12 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
     console.log(`User ${socket.id} connected!`);
+    let role: Role;
 
     socket.on("join", (data) => {
         console.log("It's join event from", socket.id, data.name);
+        if (data.name == 'admin') role = 'admin';
+        else role = 'student';
         students.set(socket.id, {socket_id: socket.id, name: data.name});
         io.emit("students_list_updated", Array.from(students.values()));
     });
@@ -26,7 +29,13 @@ io.on("connection", (socket) => {
         console.log(`User ${socket.id} disconnected!`);
         students.delete(socket.id);
         io.emit("students_list_updated", Array.from(students.values()));
-    })
+    });
+
+    socket.on("update_lesson", (data) => {
+        if (role != 'admin') return;
+        let t = JSON.parse(data.lesson) as Lesson;
+        console.log(t.title);
+    });
 });
 
 httpServer.listen(8080, () => {

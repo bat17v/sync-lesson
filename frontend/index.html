@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/style.css">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sync-lesson</title>
@@ -11,9 +10,18 @@
     <div class="fixed bottom-0 left-0 right-0 p-1 text-center bg-red-600 text-white font-medium z-50" id="status-bar">
       Disconnected!
     </div>
-    <div id="screen-login"><input type="text" id="name-input"><button id="join-btn">Join!</button></div>
-    <div id="screen-student"><h1>You are student!<logout-btn></logout-btn></h1><ul id="others"></ul></div>
-    <div id="screen-teacher"><h1>You are teacher!<logout-btn></logout-btn></h1></div>
+
+    <div id="screen-login">
+        <input type="text" id="name-input"><button id="join-btn">Join!</button>
+    </div>
+    <div id="screen-student">
+        <h1>You are student!<logout-btn></logout-btn></h1><ul id="others"></ul>
+    </div>
+    <div id="screen-teacher">
+        <h1>You are teacher!<logout-btn></logout-btn></h1>
+        <input type="file" id="lesson-editor"><button id="lesson-submit">Submit!</button>
+    </div>
+    
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

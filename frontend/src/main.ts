@@ -4,14 +4,20 @@ import type { Student } from "../../shared/types";
 import './style.css';
 import './custom-tags';
 
+
 const socket = io("http://localhost:8080");
 
 const SCREEN_TYPES = ["screen-login", "screen-student", "screen-teacher"] as const;
 type ScreenId = typeof SCREEN_TYPES[number];
 
+
 const status_bar = document.getElementById('status-bar') as HTMLElement;
+
 const join_btn = document.getElementById('join-btn') as HTMLButtonElement;
 const name_input = document.getElementById('name-input') as HTMLInputElement;
+
+const lesson_editor = document.getElementById('lesson-editor') as HTMLInputElement;
+const lesson_submit = document.getElementById('lesson-submit') as HTMLInputElement;
 
 function changeScreen(scr: ScreenId) {
     SCREEN_TYPES.forEach(scr_typ_id => {
@@ -48,5 +54,11 @@ join_btn.onclick = function () {
 
 socket.on("students_list_updated", (data: Student[]) => {
     document.getElementById('others').replaceChildren(...data.map(e => Object.assign(document.createElement("li"), {innerText: e.name})));
-    console.log(data);
-})
+});
+
+lesson_submit.onclick = async function () {
+    if (!lesson_editor.files[0]) {
+        alert("Upload the lesson!");
+    }
+    socket.emit('update_lesson', {lesson: await lesson_editor.files[0].text()});
+}
