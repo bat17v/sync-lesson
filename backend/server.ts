@@ -23,7 +23,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-
         console.log(`User ${socket.id} disconnected!`);
         students.delete(socket.id);
         io.emit("students_list_updated", Array.from(students.values()));

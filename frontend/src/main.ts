@@ -1,18 +1,8 @@
 import { io } from "socket.io-client";
 import type { Student } from "../../shared/types";
 
-// const socket = io("http://localhost:8080"); 
-// 
-// 
-// socket.on("connect", () => {
-//     socket.emit("join", {name: "haha"});
-// });
-// 
-// socket.on("disconnect", () => {
-//     alert('no server!');
-// })
 import './style.css';
-
+import './custom-tags';
 
 const socket = io("http://localhost:8080");
 
@@ -33,7 +23,14 @@ function changeScreen(scr: ScreenId) {
     });
 }
 
+function authBy(name: string) {
+    if (name == "admin") changeScreen('screen-teacher');
+    else changeScreen('screen-student');
+    socket.emit("join", {name: name});
+}
+
 changeScreen("screen-login");
+if (localStorage.my_name != null) authBy(localStorage.my_name);
 
 socket.on('connect', () => {
     status_bar.classList.add('hidden');
@@ -44,8 +41,9 @@ socket.on('disconnect', () => {
 });
 
 join_btn.onclick = function () {
-    socket.emit("join", {name: name_input.value});
-    changeScreen('screen-student');
+    if (name_input.value == "") return;
+    localStorage.my_name = name_input.value;
+    authBy(name_input.value);
 }
 
 socket.on("students_list_updated", (data: Student[]) => {
